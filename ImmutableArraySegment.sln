@@ -3,11 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31229.75
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImmutableArraySegment", "ImmutableArraySegment\ImmutableArraySegment.csproj", "{EF32DE17-FEEC-4B88-BCA2-6CAF701F2BAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImmutableArraySegment", "ImmutableArraySegment\ImmutableArraySegment.csproj", "{EF32DE17-FEEC-4B88-BCA2-6CAF701F2BAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImmutableArraySegment.Tests", "ImmutableArraySegment.Tests\ImmutableArraySegment.Tests.csproj", "{212878B6-7439-4007-944C-02B2A2CC6899}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImmutableArraySegment.Tests", "ImmutableArraySegment.Tests\ImmutableArraySegment.Tests.csproj", "{212878B6-7439-4007-944C-02B2A2CC6899}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImmutableArraySegment.Benchmarks", "ImmutableArraySegment.Benchmarks\ImmutableArraySegment.Benchmarks.csproj", "{E3B22D9E-7225-409B-B321-A299F2E7D1CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImmutableArraySegment.Benchmarks", "ImmutableArraySegment.Benchmarks\ImmutableArraySegment.Benchmarks.csproj", "{E3B22D9E-7225-409B-B321-A299F2E7D1CF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CD928A93-6206-4795-AC92-C62985DDC75A}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

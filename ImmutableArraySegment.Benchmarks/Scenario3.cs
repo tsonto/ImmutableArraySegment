@@ -3,7 +3,7 @@ using Tsonto.Collections.Generic;
 
 namespace Benchmarks
 {
-	partial class Program
+    partial class Program
 	{
 		private static void Scenario3_SmallStruct()
 		{

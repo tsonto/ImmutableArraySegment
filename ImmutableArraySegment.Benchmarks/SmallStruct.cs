@@ -1,8 +1,6 @@
-﻿using Tsonto.Collections.Generic;
-
-namespace Benchmarks
+﻿namespace Benchmarks
 {
-	internal readonly struct SmallStruct 
+    internal readonly struct SmallStruct
 	{
 		public readonly int X;
 

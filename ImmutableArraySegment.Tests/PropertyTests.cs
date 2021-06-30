@@ -1,11 +1,11 @@
-﻿using FluentAssertions;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
+using FluentAssertions;
 using Tsonto.Collections.Generic;
 using Xunit;
 
 namespace Tests
 {
-	public class PropertyTests
+    public class PropertyTests
 	{
 		[Fact]
 		public void Length_GivesSegmentLength()

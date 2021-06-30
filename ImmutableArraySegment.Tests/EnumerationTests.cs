@@ -1,12 +1,12 @@
-﻿using FluentAssertions;
-using System;
+﻿using System;
 using System.Linq;
+using FluentAssertions;
 using Tsonto.Collections.Generic;
 using Xunit;
 
 namespace Tests
 {
-	public class EnumerationTests
+    public class EnumerationTests
 	{
 		[Fact]
 		public void Enumerable_RespectsOffsetAndLength()

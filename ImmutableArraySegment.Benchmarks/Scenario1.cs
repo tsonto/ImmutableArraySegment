@@ -2,7 +2,7 @@
 
 namespace Benchmarks
 {
-	partial class Program
+    partial class Program
 	{
 		private static void Scenario1_SmallStruct()
 		{

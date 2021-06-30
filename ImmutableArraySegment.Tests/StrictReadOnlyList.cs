@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Tests
 {
-	internal class StrictReadOnlyList<T> : IReadOnlyList<T>
+    internal class StrictReadOnlyList<T> : IReadOnlyList<T>
 	{
 		private readonly List<T> inner;
 

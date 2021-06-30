@@ -1,6 +1,6 @@
 ﻿namespace Benchmarks
 {
-	internal readonly struct LargeStruct
+    internal readonly struct LargeStruct
 	{
 		public LargeStruct(long start)
 		{

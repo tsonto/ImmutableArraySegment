@@ -1,6 +1,6 @@
 ﻿namespace Benchmarks
 {
-	internal readonly struct MediumStruct
+    internal readonly struct MediumStruct
 	{
 		public readonly int a;
 		public readonly int b;

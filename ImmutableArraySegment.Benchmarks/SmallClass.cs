@@ -1,6 +1,6 @@
 ﻿namespace Benchmarks
 {
-	internal class SmallClass
+    internal class SmallClass
 	{
 		public SmallClass(int i)
 		{

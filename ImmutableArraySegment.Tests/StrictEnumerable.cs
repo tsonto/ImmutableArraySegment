@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Tests
 {
-	internal class StrictEnumerable<T> : IEnumerable<T>
+    internal class StrictEnumerable<T> : IEnumerable<T>
 	{
 		private readonly List<T> inner;
 
