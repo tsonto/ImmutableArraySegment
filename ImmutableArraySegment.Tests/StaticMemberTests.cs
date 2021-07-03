@@ -1,4 +1,6 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using FluentAssertions;
 using Tsonto.Collections.Generic;
 using Xunit;
@@ -43,6 +45,23 @@ namespace Tests
             var uut = wrap.ToImmutableArraySegment();
             original[1] = 'x';
             uut.ToArray().Should().BeEquivalentTo('a', 'b', 'c', 'd');
+        }
+
+        [Fact]
+        public void Join_BasicCase()
+        {
+            var sources = new IReadOnlyList<char>[]
+            {
+                new[]{ 'a', 'b', 'c' },
+                new ImmutableArraySegment<char>(new[]{ 'd', 'e' }),
+                new[]{ 'f', 'g', 'h', 'i' }.ToList(),
+            };
+            var delimiter = new[] { 'x', 'y' };
+
+            var actual = ImmutableArraySegment.Join(delimiter, sources);
+
+            var expected = new[] { 'a', 'b', 'c', 'x', 'y', 'd', 'e', 'x', 'y', 'f', 'g', 'h', 'i' };
+            actual.Should().BeEquivalentTo(expected);
         }
 
         private class BaseClass { }
