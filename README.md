@@ -17,7 +17,7 @@ var combined = mid + segment; // b,c,a,b,c,d
 Every type, method, property, etc. has descriptive XML comments. Every method's documentation includes remarks detailing its performance characteristics.
 
 ## License
-DockerSdk is licensed under the [MIT license](LICENSE.md).
+DockerSdk is licensed under the [MIT license](LICENSE).
 
 ## Code of Conduct
 The DockerSdk project follows the [Contributor Covenant](CODE_OF_CONDUCT.md). Harrasment will not be tolerated.
