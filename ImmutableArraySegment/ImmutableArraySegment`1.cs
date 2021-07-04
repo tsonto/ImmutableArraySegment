@@ -13,40 +13,36 @@ namespace Tsonto.Collections.Generic
     /// <typeparam name="T">The element type of the array.</typeparam>
     /// <remarks>
     /// <para>
-    /// Objects of this type are immutable, and they guarantee that the array they point to is immutable. However (like other .NET
-    /// array types), if the type <typeparamref name="T"/> is not immutable then the elements themselves may change. Example: since
-    /// <c>SortedSet&lt;int&gt;</c> is mutable, for an <c>ImmutableArraySegment&lt;SortedSet&lt;int&gt;&gt; s</c>, <c>s[0]</c> will
-    /// always refer to the same set object, but the contents of that object may vary over time.
+    /// Objects of this type are immutable, and they guarantee that the array they point to is immutable. However (like
+    /// other .NET array types), if the type <typeparamref name="T"/> is not immutable then the elements themselves may
+    /// change. Example: since <c>SortedSet&lt;int&gt;</c> is mutable, for an
+    /// <c>ImmutableArraySegment&lt;SortedSet&lt;int&gt;&gt; s</c>, <c>s[0]</c> will always refer to the same set
+    /// object, but the contents of that object may vary over time.
     /// </para>
     /// <para>Comparison with built-int types:
     /// <list type="bullet">
-    /// <item>This type is, in many ways, a drop-in replacement for <see cref="ImmutableArray{T}"/>. ImmutableArraySegment's
-    /// advantages are that it provides more functionality and does much of it (such as getting array slices) faster.</item>
-    /// <item>This type can be seen as an immutable version of <see cref="ArraySegment{T}"/>, although ImmutableArraySegment
-    /// provides more features.</item>
     /// <item>
+    /// This type is, in many ways, a drop-in replacement for <see cref="ImmutableArray{T}"/>. ImmutableArraySegment's
+    /// advantages are that it provides more functionality and does much of it (such as getting array slices) faster.
     /// </item>
-    /// It's also somewhat similar to <see cref="ReadOnlyMemory{T}"/>, but only works with managed memory. (And, of course,
-    /// ReadOnlyMemory doesn't actually guarantee immutability, since the data it wraps could be changed by other code.)
+    /// <item>
+    /// This type can be seen as an immutable version of <see cref="ArraySegment{T}"/>, although ImmutableArraySegment
+    /// provides more features.
+    /// </item>
+    /// <item></item>
+    /// It's also somewhat similar to <see cref="ReadOnlyMemory{T}"/>, but only works with managed memory. (And, of
+    /// course, ReadOnlyMemory doesn't actually guarantee immutability, since the data it wraps could be changed by
+    /// other code.)
     /// </list>
     /// </para>
     /// <para>
-    /// This package's developers have taken care to optimize this type for performance, both in terms of speed and memory usage.
-    /// Additionally, every method's documentation provides information about its performance characteristics.
+    /// This package's developers have taken care to optimize this type for performance, both in terms of speed and
+    /// memory usage. Additionally, every method's documentation provides information about its performance
+    /// characteristics.
     /// </para>
     /// </remarks>
     public readonly struct ImmutableArraySegment<T> : IImmutableList<T>, IEnumerable<T>, IReadOnlyList<T>, IReadOnlyCollection<T>
     {
-        internal readonly T[] data;
-        internal readonly int ourStart;
-        internal readonly int ourLength;
-
-        internal int ourEnd
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => ourStart + ourLength;
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ImmutableArraySegment"/>
         /// </summary>
@@ -119,9 +115,12 @@ namespace Tsonto.Collections.Generic
         /// Initializes a new instance of the <see cref="ImmutableArraySegment"/>
         /// </summary>
         /// <param name="source">The contents to copy to the array.</param>
+        /// <param name="range">The portion of the source to copy.</param>
         /// <remarks>This operation is O(r) for speed and memory, where r is the length of the range.</remarks>
         /// <exception cref="ArgumentNullException"><paramref name="source"/> is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">The requested range is invalid, or is invalid for the length of the source.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// The requested range is invalid, or is invalid for the length of the source.
+        /// </exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public ImmutableArraySegment(T[] source, Range range)
         {
@@ -143,12 +142,16 @@ namespace Tsonto.Collections.Generic
         /// implements:
         /// <list type="bullet">
         /// <item><c><typeparamref name="T"/>[]</c>: O(n)</item>
-        /// <item><c>ImmutableArraySegment&lt;<typeparamref name="T"/>&gt;</c>: O(1)</item>
-        /// <item><c>ArraySegment&lt;<typeparamref name="T"/>&gt;</c>: O(n), where n is the length of the segment
-        /// rather than of its backing array</item>
-        /// <item><c>ICollection&lt;<typeparamref name="T"/>&gt;</c>: O(n)</item>
-        /// <item><c>IReadOnlyList&lt;<typeparamref name="T"/>&gt;</c>: O(n)</item>
-        /// <item>otherwise: same as ToArray, which is approximately O(n*log(n)); iterates through the sequence only once</item>
+        /// <item><c>ImmutableArraySegment&lt; <typeparamref name="T"/>&gt;</c>: O(1)</item>
+        /// <item>
+        /// <c>ArraySegment&lt; <typeparamref name="T"/>&gt;</c>: O(n), where n is the length of the segment rather than
+        /// of its backing array
+        /// </item>
+        /// <item><c>ICollection&lt; <typeparamref name="T"/>&gt;</c>: O(n)</item>
+        /// <item><c>IReadOnlyList&lt; <typeparamref name="T"/>&gt;</c>: O(n)</item>
+        /// <item>
+        /// otherwise: same as ToArray, which is approximately O(n*log(n)); iterates through the sequence only once
+        /// </item>
         /// </list>
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="source"/> is null.</exception>
@@ -202,25 +205,29 @@ namespace Tsonto.Collections.Generic
         /// <param name="range">The range of items from the source.</param>
         /// <remarks>
         /// This operation's performance varies based on the actual type of the input and which interfaces it
-        /// implements. n refers to the full length of the source, r to the length of the range, and s to the
-        /// start index of the range:
+        /// implements. n refers to the full length of the source, r to the length of the range, and s to the start
+        /// index of the range:
         /// <list type="bullet">
         /// <item><c><typeparamref name="T"/>[]</c>: O(r)</item>
-        /// <item><c>ImmutableArraySegment&lt;<typeparamref name="T"/>&gt;</c>: O(1)</item>
-        /// <item><c>ArraySegment&lt;<typeparamref name="T"/>&gt;</c>: O(r)</item>
-        /// <item><c>ICollection&lt;<typeparamref name="T"/>&gt; with n == r</c>: O(r)</item>
-        /// <item><c>IReadOnlyList&lt;<typeparamref name="T"/>&gt;</c>: O(n)</item>
-        /// <item><c>ICollection&lt;<typeparamref name="T"/>&gt; with n != r</c>: O(s) + O(r*log(r)); sequence
-        /// is only enunmerated once, and not past s+r</item>
-        /// <item>otherwise, if r is implicit in how the range was given: O(s) + O(r*log(r)); sequence is only
-        /// enumerated once, and not past s+r</item>
-        /// <item,>otherwise, O(n) + O(s) + O(r*log(r)); sequence is fully enumerated and then partially
-        /// enumerated</item>
+        /// <item><c>ImmutableArraySegment&lt; <typeparamref name="T"/>&gt;</c>: O(1)</item>
+        /// <item><c>ArraySegment&lt; <typeparamref name="T"/>&gt;</c>: O(r)</item>
+        /// <item><c>ICollection&lt; <typeparamref name="T"/>&gt; with n == r</c>: O(r)</item>
+        /// <item><c>IReadOnlyList&lt; <typeparamref name="T"/>&gt;</c>: O(n)</item>
+        /// <item>
+        /// <c>ICollection&lt; <typeparamref name="T"/>&gt; with n != r</c>: O(s) + O(r*log(r)); sequence is only
+        /// enunmerated once, and not past s+r
+        /// </item>
+        /// <item>
+        /// otherwise, if r is implicit in how the range was given: O(s) + O(r*log(r)); sequence is only enumerated
+        /// once, and not past s+r
+        /// </item>
+        /// <item>otherwise, O(n) + O(s) + O(r*log(r)); sequence is fully enumerated and then partially enumerated</item>
         /// </list>
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="source"/> is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">The requested range is invalid, or is invalid for the
-        /// length of the source.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// The requested range is invalid, or is invalid for the length of the source.
+        /// </exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public ImmutableArraySegment(IEnumerable<T> source, Range range)
         {
@@ -295,11 +302,14 @@ namespace Tsonto.Collections.Generic
         /// <param name="source">The source of contents to copy to the array.</param>
         /// <param name="offset">How many elements from the source's start to begin copying from.</param>
         /// <param name="length">How many elements to copy from the source.</param>
-        /// <remarks>This operation is O(r) for speed and memory, where r is the provided length rather than
-        /// the length of the source array.</remarks>
+        /// <remarks>
+        /// This operation is O(r) for speed and memory, where r is the provided length rather than the length of the
+        /// source array.
+        /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="source"/> is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">The requested range is invalid, or is invalid for the
-        /// length of the source.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// The requested range is invalid, or is invalid for the length of the source.
+        /// </exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ImmutableArraySegment(T[] source, int offset, int length)
         {
@@ -345,23 +355,15 @@ namespace Tsonto.Collections.Generic
         /// <summary>
         /// Gets an empty instance of <see cref="ImmutableArraySegment{T}"/>.
         /// </summary>
-        /// <remarks>When performance is more important than readability, just use
-        /// <c>default(IImutableArraySegment&lt;Whatever&gt;)</c> instead, to avoid a copy.</remarks>
+        /// <remarks>
+        /// When performance is more important than readability, just use
+        /// <c>default(IImutableArraySegment&lt;Whatever&gt;)</c> instead, to avoid a copy.
+        /// </remarks>
         /// <remarks>This operation is O(1) for time and memory.</remarks>
         public static ImmutableArraySegment<T> Empty
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => default;
-        }
-
-        /// <summary>
-        /// Gets 
-        /// </summary>
-        /// <remarks>This operation is O(1) for time and memory.</remarks>
-        public int Length
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => ourLength;
         }
 
         /// <inheritdoc/>
@@ -372,13 +374,26 @@ namespace Tsonto.Collections.Generic
         }
 
         /// <summary>
+        /// Gets
+        /// </summary>
+        /// <remarks>This operation is O(1) for time and memory.</remarks>
+        public int Length
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => ourLength;
+        }
+
+        /// <summary>
         /// Gets the element at the given index.
         /// </summary>
-        /// <param name="index">The position to read from, relative to the start of this object's view of
-        /// the underlying array.</param>
+        /// <param name="index">
+        /// The position to read from, relative to the start of this object's view of the underlying array.
+        /// </param>
         /// <returns>The element.</returns>
-        /// <remarks>This operation is O(1) for time and memory. For value types, and especially large value 
-        /// types, you can avoid a copy operation by using <see cref="ItemRef(int)"/> instead.</remarks>
+        /// <remarks>
+        /// This operation is O(1) for time and memory. For value types, and especially large value types, you can avoid
+        /// a copy operation by using <see cref="ItemRef(int)"/> instead.
+        /// </remarks>
         public T this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -388,11 +403,17 @@ namespace Tsonto.Collections.Generic
         /// <summary>
         /// Gets the element at the given index.
         /// </summary>
-        /// <param name="index">The position to read from, relative to the start or end of this object's view of
-        /// the underlying array.</param>
+        /// <param name="index">
+        /// The position to read from, relative to the start or end of this object's view of the underlying array.
+        /// </param>
         /// <returns>The element.</returns>
-        /// <remarks>This operation is O(1) for time and memory. For value types, and especially large value 
-        /// types, you can avoid a copy operation by using <see cref="ItemRef(Index)"/> instead.</remarks>
+        /// <remarks>
+        /// This operation is O(1) for time and memory. For value types, and especially large value types, you can avoid
+        /// a copy operation by using <see cref="ItemRef(Index)"/> instead.
+        /// </remarks>
+        /// <exception cref="IndexOutOfRangeException">
+        /// The specified position is beyond the array segment's bounds.
+        /// </exception>
         public T this[Index index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -400,35 +421,15 @@ namespace Tsonto.Collections.Generic
         }
 
         /// <summary>
-        /// Gets the element at the given index by reference.
+        /// Gets a new <see cref="ImmutableArraySegment{T}"/> representing a portion of this instance's view into the
+        /// backing array.
         /// </summary>
-        /// <param name="index">The position to read from, relative to the start of this object's view of
-        /// the underlying array.</param>
-        /// <returns>The element.</returns>
-        /// <remarks>This operation is O(1) for time and consumes no memory.</remarks>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref readonly T ItemRef(int index)
-            => ref data[ourStart + index];
-
-        /// <summary>
-        /// Gets the element at the given index by reference.
-        /// </summary>
-        /// <param name="index">The position to read from, relative to the start or end of this object's view of
-        /// the underlying array.</param>
-        /// <returns>The element.</returns>
-        /// <remarks>This operation is O(1) for time and consumes no memory.</remarks>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref readonly T ItemRef(Index index)
-            => ref data[ourStart + index.GetOffset(ourLength)];
-
-        /// <summary>
-        /// Gets a new <see cref="ImmutableArraySegment{T}"/> representing a portion of this instance's view
-        /// into the backing array.
-        /// </summary>
-        /// <param name="range">A range defining the portion of the current view that the new view should
-        /// have.</param>
+        /// <param name="range">A range defining the portion of the current view that the new view should have.</param>
         /// <returns>A new <see cref="ImmutableArraySegment{T}"/>.</returns>
         /// <remarks>This operation is O(1) for time and memory.</remarks>
+        /// <exception cref="IndexOutOfRangeException">
+        /// The start or end of the range is beyond the array segment's bounds.
+        /// </exception>
         public ImmutableArraySegment<T> this[Range range]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -439,69 +440,33 @@ namespace Tsonto.Collections.Generic
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ImmutableArraySegment<T> Slice(int offset, int length)
-        {
-            if (offset < 0 || offset > length || length < 0 || offset + length > ourLength)
-                throw new IndexOutOfRangeException();
-            return new(data, ourStart + offset, length, true);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ImmutableArraySegment<T> Slice(int offset)
-        {
-            if (offset < 0 || offset > ourLength)
-                throw new IndexOutOfRangeException();
-            return new(data, ourStart + offset, ourLength - offset, true);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IEnumerator<T> GetEnumerator() => new Enumerator(this);
-
-        private class Enumerator : IEnumerator<T>
+        internal int ourEnd
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public Enumerator(ImmutableArraySegment<T> parent)
-            {
-                position = parent.ourStart - 1;
-                this.parent = parent;
-            }
-
-            private int position;
-            private readonly ImmutableArraySegment<T> parent;
-
-            public T Current
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-                get => position >= parent.ourStart && position < parent.ourEnd
-                    ? parent.data[position]
-                    : throw new InvalidOperationException();
-            }
-
-            object IEnumerator.Current => Current!;
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public void Dispose()
-            {
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public bool MoveNext()
-            {
-                ++position;
-                return position < parent.ourEnd;
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public void Reset()
-                => position = parent.ourStart - 1;
+            get => ourStart + ourLength;
         }
+
+        internal readonly T[] data;
+        internal readonly int ourLength;
+        internal readonly int ourStart;
 
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        IEnumerator IEnumerable.GetEnumerator()
-            => GetEnumerator();
+        IImmutableList<T> IImmutableList<T>.Add(T value)
+            => Append(value);
 
+        /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        IImmutableList<T> IImmutableList<T>.AddRange(IEnumerable<T> items)
+            => Append(items);
+
+        /// <summary>
+        /// Creates a new <see cref="ImmutableArraySegment{T}"/> that's the same as this one except with a specified
+        /// element appended.
+        /// </summary>
+        /// <param name="value">The new element.</param>
+        /// <returns>A new <see cref="ImmutableArraySegment{T}"/>.</returns>
+        /// <remarks>This operation is O(n) for time and memory, where n is this segment's length.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ImmutableArraySegment<T> Append(T value)
         {
@@ -511,20 +476,22 @@ namespace Tsonto.Collections.Generic
             return new(newArray, raw: true);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ImmutableArraySegment<T> Prepend(T value)
-        {
-            var newArray = new T[ourLength + 1];
-            Array.Copy(data, ourStart, newArray, 1, ourLength);
-            data[0] = value;
-            return new(newArray, raw: true);
-        }
-
-        /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        IImmutableList<T> IImmutableList<T>.Add(T value)
-            => Append(value);
-
+        /// <summary>
+        /// Creates a new <see cref="ImmutableArraySegment{T}"/> that's the same as this one except with a specified
+        /// elements appended.
+        /// </summary>
+        /// <param name="items">The new elements.</param>
+        /// <returns>A new <see cref="ImmutableArraySegment{T}"/>.</returns>
+        /// <remarks>
+        /// This operation's time and memory characteristics are O(n), where n is the combined length of the output. The
+        /// copy operation is done efficiently if the actual type of the <paramref name="items"/> input is <c>T[]</c>,
+        /// <c>ImmutableArraySegment&lt;T&gt;</c>, or <c>ArraySegment&lt;T&gt;</c>, or implements
+        /// <c>IReadOnlyList&lt;T&gt;</c> or <c>ICollection&lt;T&gt;</c>. Otherwise, the copy is somewhat less
+        /// efficient, and iterates over the enumerable twice.
+        /// </remarks>
+        /// <exception cref="InvalidOperationException">
+        /// The length of the enumerated sequence differs when run the first time vs. the second time.
+        /// </exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ImmutableArraySegment<T> Append(IEnumerable<T> items)
         {
@@ -533,150 +500,81 @@ namespace Tsonto.Collections.Generic
             return new(newArray, true);
         }
 
+        /// <summary>
+        /// Creates a new <see cref="ImmutableArraySegment{T}"/> that's the same as this one except with a specified
+        /// elements appended.
+        /// </summary>
+        /// <param name="items">The new elements.</param>
+        /// <returns>A new <see cref="ImmutableArraySegment{T}"/>.</returns>
+        /// <remarks>This operation is O(n) for time and memory, where n is the combined length.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ImmutableArraySegment<T> Append(in ReadOnlyMemory<T> items)
         {
-            T[] newArray = AllocateAndCopyReadOnlyMemoryStruct(ourLength, ourLength, items);
+            T[] newArray = AllocateAndCopyReadOnlyMemoryStruct(ourLength, ourLength, in items);
             Array.Copy(data, ourStart, newArray, 0, ourLength);
             return new(newArray, true);
         }
 
+        /// <summary>
+        /// Creates a new <see cref="ImmutableArraySegment{T}"/> that's the same as this one except with a specified
+        /// elements appended.
+        /// </summary>
+        /// <param name="items">The new elements.</param>
+        /// <returns>A new <see cref="ImmutableArraySegment{T}"/>.</returns>
+        /// <remarks>This operation is O(n) for time and memory, where n is the combined length.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ImmutableArraySegment<T> Append(in Memory<T> items)
         {
-            T[] newArray = AllocateAndCopyMemoryStruct(ourLength, ourLength, items);
+            T[] newArray = AllocateAndCopyMemoryStruct(ourLength, ourLength, in items);
             Array.Copy(data, ourStart, newArray, 0, ourLength);
             return new(newArray, true);
         }
 
+        /// <summary>
+        /// Creates a new <see cref="ImmutableArraySegment{T}"/> that's the same as this one except with a specified
+        /// elements appended.
+        /// </summary>
+        /// <param name="items">The new elements.</param>
+        /// <returns>A new <see cref="ImmutableArraySegment{T}"/>.</returns>
+        /// <remarks>This operation is O(n) for time and memory, where n is the combined length.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ImmutableArraySegment<T> Append(in ReadOnlySpan<T> items)
         {
-            T[] newArray = AllocateAndCopyReadOnlySpan(ourLength, ourLength, items);
+            T[] newArray = AllocateAndCopyReadOnlySpan(ourLength, ourLength, in items);
             Array.Copy(data, ourStart, newArray, 0, ourLength);
             return new(newArray, true);
         }
 
+        /// <summary>
+        /// Creates a new <see cref="ImmutableArraySegment{T}"/> that's the same as this one except with a specified
+        /// elements appended.
+        /// </summary>
+        /// <param name="items">The new elements.</param>
+        /// <returns>A new <see cref="ImmutableArraySegment{T}"/>.</returns>
+        /// <remarks>This operation is O(n) for time and memory, where n is the combined length.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ImmutableArraySegment<T> Append(in Span<T> items)
         {
-            T[] newArray = AllocateAndCopySpan(ourLength, ourLength, items);
+            T[] newArray = AllocateAndCopySpan(ourLength, ourLength, in items);
             Array.Copy(data, ourStart, newArray, 0, ourLength);
             return new(newArray, true);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static T[] AllocateAndCopy(IEnumerable<T> source, int destOffset, int extraDestLength)
-        {
-            if (source is T[] sourceArray)
-                return AllocateAndCopyArray(destOffset, extraDestLength, sourceArray);
-            else if (source is ImmutableArraySegment<T> sourceIM)
-                return AllocateAndCopyImmutableArraySegment(destOffset, extraDestLength, sourceIM);
-            else if (source is ArraySegment<T> sourceArraySegment)
-                return AllocateAndCopyArraySegment(destOffset, extraDestLength, sourceArraySegment);
-            else if (source is IReadOnlyList<T> sourceROList)
-                return AllocateAndCopyReadOnlyList(destOffset, extraDestLength, sourceROList);
-            else if (source is ICollection<T> sourceCollection)
-                return AllocateAndCopyCollection(destOffset, extraDestLength, sourceCollection);
-            else
-                return AllocateAndCopyOtherEnumerable(destOffset, extraDestLength, source);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        internal static T[] AllocateAndCopyArraySegment(int destOffset, int extraDestLength, ArraySegment<T> source)
-        {
-            var dest = new T[source.Count + extraDestLength];
-            source.CopyTo(dest, destOffset);
-            return dest;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        internal static T[] AllocateAndCopyImmutableArraySegment(int destOffset, int extraDestLength, ImmutableArraySegment<T> source)
-        {
-            var dest = new T[source.Length + extraDestLength];
-            source.CopyTo(dest, destOffset);
-            return dest;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        internal static T[] AllocateAndCopyCollection(int destOffset, int extraDestLength, ICollection<T> source)
-        {
-            var dest = new T[source.Count + extraDestLength];
-            source.CopyTo(dest, destOffset);
-            return dest;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        internal static T[] AllocateAndCopyOtherEnumerable(int destOffset, int extraDestLength, IEnumerable<T> source)
-        {
-            int sourceLength = source.Count();
-            var dest = new T[sourceLength + extraDestLength];
-            var enumerator = source.GetEnumerator();
-            for (int i = 0; i < sourceLength; ++i)
-            {
-                if (!enumerator.MoveNext())
-                    throw new InvalidOperationException("The input sequence is shorter the second time than the first time.");
-                dest[i + destOffset] = enumerator.Current;
-            }
-            if (enumerator.MoveNext())
-                throw new InvalidOperationException("The input sequence is longer the second time than the first time.");
-            return dest;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        internal static T[] AllocateAndCopyReadOnlyList(int destOffset, int extraDestLength, IReadOnlyList<T> source)
-        {
-            var dest = new T[source.Count + extraDestLength];
-            for (int i = 0; i < source.Count; ++i)
-                dest[i + destOffset] = source[i];
-            return dest;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        internal static T[] AllocateAndCopyMemoryStruct(int destOffset, int extraDestLength, in Memory<T> source)
-        {
-            var dest = new T[source.Length + extraDestLength];
-            source.CopyTo(new Memory<T>(dest)[destOffset..]);
-            return dest;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        internal static T[] AllocateAndCopyReadOnlyMemoryStruct(int destOffset, int extraDestLength, in ReadOnlyMemory<T> source)
-        {
-            var dest = new T[source.Length + extraDestLength];
-            source.CopyTo(new Memory<T>(dest)[destOffset..]);
-            return dest;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        internal static T[] AllocateAndCopyReadOnlySpan(int destOffset, int extraDestLength, in ReadOnlySpan<T> source)
-        {
-            var dest = new T[source.Length + extraDestLength];
-            source.CopyTo(new Span<T>(dest)[destOffset..]);
-            return dest;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        internal static T[] AllocateAndCopySpan(int destOffset, int extraDestLength, in Span<T> source)
-        {
-            var dest = new T[source.Length + extraDestLength];
-            source.CopyTo(new Span<T>(dest)[destOffset..]);
-            return dest;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        internal static T[] AllocateAndCopyArray(int destOffset, int extraDestLength, T[] source)
-        {
-            var dest = new T[source.Length + extraDestLength];
-            Array.Copy(source, 0, dest, destOffset, source.Length);
-            return dest;
         }
 
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        IImmutableList<T> IImmutableList<T>.AddRange(IEnumerable<T> items)
-            => Append(items);
+        IImmutableList<T> IImmutableList<T>.Clear()
+            => Empty;
 
+        /// <summary>
+        /// Copies the array segment's elements to the given array.
+        /// </summary>
+        /// <param name="dest">The array to copy to.</param>
+        /// <param name="destOffset">The position in the destination array to start the copy at.</param>
+        /// <param name="length">The number of elements to copy.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// The given offset and length exceed the bounds of the source and/or the destination.
+        /// </exception>
+        /// <remarks>This operation is O(n) for time and memory, where n is length copied.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public void CopyTo(T[] dest, int destOffset, int length)
         {
@@ -688,14 +586,29 @@ namespace Tsonto.Collections.Generic
             Array.Copy(data, ourStart, dest, destOffset, length);
         }
 
+        /// <summary>
+        /// Copies the array segment's elements to the given array.
+        /// </summary>
+        /// <param name="dest">The array to copy to.</param>
+        /// <param name="destOffset">The position in the destination array to start the copy at.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// The given offset and the source's length exceed the bounds of the source and/or the destination.
+        /// </exception>
+        /// <remarks>This operation is O(n) for time and memory, where n is source's length.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CopyTo(T[] dest, int destOffset)
             => CopyTo(dest, destOffset, ourLength);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void CopyTo(in Span<T> dest, int destOffset)
-            => CopyTo(in dest, destOffset, ourLength);
-
+        /// <summary>
+        /// Copies the array segment's elements to the given array.
+        /// </summary>
+        /// <param name="dest">The array to copy to.</param>
+        /// <param name="destOffset">The position in the destination array to start the copy at.</param>
+        /// <param name="length">The number of elements to copy.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// The given offset and length exceed the bounds of the source and/or the destination.
+        /// </exception>
+        /// <remarks>This operation is O(n) for time and memory, where n is length copied.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public void CopyTo(in Span<T> dest, int destOffset, int length)
         {
@@ -708,39 +621,159 @@ namespace Tsonto.Collections.Generic
                 dest[i + destOffset] = data[i + ourStart];
         }
 
+        /// <summary>
+        /// Copies the array segment's elements to the given array.
+        /// </summary>
+        /// <param name="dest">The array to copy to.</param>
+        /// <param name="destOffset">The position in the destination array to start the copy at.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// The given offset and the source's length exceed the bounds of the source and/or the destination.
+        /// </exception>
+        /// <remarks>This operation is O(n) for time and memory, where n the source's length.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void CopyTo(in Memory<T> dest, int destOffset)
+        public void CopyTo(in Span<T> dest, int destOffset)
             => CopyTo(in dest, destOffset, ourLength);
 
+        /// <summary>
+        /// Copies the array segment's elements to the given array.
+        /// </summary>
+        /// <param name="dest">The array to copy to.</param>
+        /// <param name="destOffset">The position in the destination array to start the copy at.</param>
+        /// <param name="length">The number of elements to copy.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// The given offset and length exceed the bounds of the source and/or the destination.
+        /// </exception>
+        /// <remarks>This operation is O(n) for time and memory, where n is length copied.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public void CopyTo(in Memory<T> dest, int destOffset, int length)
             => CopyTo(dest.Span, destOffset, length);
 
+        /// <summary>
+        /// Copies the array segment's elements to the given array.
+        /// </summary>
+        /// <param name="dest">The array to copy to.</param>
+        /// <param name="destOffset">The position in the destination array to start the copy at.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// The given offset and the source's length exceed the bounds of the source and/or the destination.
+        /// </exception>
+        /// <remarks>This operation is O(n) for time and memory, where n is the source's length.</remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CopyTo(in Memory<T> dest, int destOffset)
+            => CopyTo(in dest, destOffset, ourLength);
+
+        /// <summary>
+        /// Gets an enumerator for iterating over the segment's elements.
+        /// </summary>
+        /// <returns>An enumerator.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IEnumerator<T> GetEnumerator() => new Enumerator(this);
+
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        IImmutableList<T> IImmutableList<T>.Clear()
-            => Empty;
+        IEnumerator IEnumerable.GetEnumerator()
+            => GetEnumerator();
 
+        /// <summary>
+        /// Finds the position of the first occurence of the given element in the array segment.
+        /// </summary>
+        /// <param name="item">The element to search for.</param>
+        /// <returns>
+        /// The number of elements from the beginning of the segment that the element was found at, or -1 if the element
+        /// was not found.
+        /// </returns>
+        /// <remarks>This operation is O(n) for time and O(1) for memory, where n is the source's length.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int IndexOf(T item)
             => IndexOf(item, 0, ourLength, (IEqualityComparer<T>?)null);
 
+        /// <summary>
+        /// Finds the position of the first occurence of the given element in the array segment.
+        /// </summary>
+        /// <param name="item">The element to search for.</param>
+        /// <param name="index">The position to start the search from. 0 is the start of the array segment.</param>
+        /// <returns>
+        /// The number of elements from the beginning of the segment that the element was found at, or -1 if the element
+        /// was not found.
+        /// </returns>
+        /// <remarks>This operation is O(n) for time and O(1) for memory, where n is the search length.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int IndexOf(in T item, int index)
             => IndexOf(in item, index, ourLength - index, (IEqualityComparer<T>?)null);
 
+        /// <summary>
+        /// Finds the position of the first occurence of the given element in the array segment.
+        /// </summary>
+        /// <param name="item">The element to search for.</param>
+        /// <param name="index">The position to start the search from. 0 is the start of the array segment.</param>
+        /// <param name="count">How many elements to search.</param>
+        /// <returns>
+        /// The number of elements from the beginning of the segment that the element was found at, or -1 if the element
+        /// was not found.
+        /// </returns>
+        /// <remarks>This operation is O(n) for time and O(1) for memory, where n is the search length.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int IndexOf(T item, int index, int count)
             => IndexOf(item, index, count, (IEqualityComparer<T>?)null);
 
+        /// <summary>
+        /// Finds the position of the first occurence of the given element in the array segment.
+        /// </summary>
+        /// <param name="item">The element to search for.</param>
+        /// <param name="equalityComparer">
+        /// The equality comparer to use for testing whether a given element is a match.
+        /// </param>
+        /// <returns>
+        /// The number of elements from the beginning of the segment that the element was found at, or -1 if the element
+        /// was not found.
+        /// </returns>
+        /// <remarks>
+        /// This operation is O(n) for time and O(1) for memory, where n is the segment's length. If <typeparamref
+        /// name="T"/> is a value type, especially a large one, <see cref="IndexOf(in T, FastEqualityFunction{T})"/> may
+        /// be one or more orders of magnitude faster.
+        /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int IndexOf(T item, IEqualityComparer<T>? equalityComparer)
             => IndexOf(item, 0, ourLength, equalityComparer);
 
+        /// <summary>
+        /// Finds the position of the first occurence of the given element in the array segment.
+        /// </summary>
+        /// <param name="item">The element to search for.</param>
+        /// <param name="index">The position to start the search from. 0 is the start of the array segment.</param>
+        /// <param name="equalityComparer">
+        /// The equality comparer to use for testing whether a given element is a match.
+        /// </param>
+        /// <returns>
+        /// The number of elements from the beginning of the segment that the element was found at, or -1 if the element
+        /// was not found.
+        /// </returns>
+        /// <remarks>
+        /// This operation is O(n) for time and O(1) for memory, where n is the search length. If <typeparamref
+        /// name="T"/> is a value type, especially a large one, <see cref="IndexOf(in T, int,
+        /// FastEqualityFunction{T})"/> may be one or more orders of magnitude faster.
+        /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int IndexOf(T item, int index, IEqualityComparer<T>? equalityComparer)
             => IndexOf(item, index, ourLength - index, equalityComparer);
 
+        /// <summary>
+        /// Finds the position of the first occurence of the given element in the array segment.
+        /// </summary>
+        /// <param name="item">The element to search for.</param>
+        /// <param name="index">The position to start the search from. 0 is the start of the array segment.</param>
+        /// <param name="count">How many elements to search.</param>
+        /// <param name="equalityComparer">
+        /// The equality comparer to use for testing whether a given element is a match.
+        /// </param>
+        /// <returns>
+        /// The number of elements from the beginning of the segment that the element was found at, or -1 if the element
+        /// was not found.
+        /// </returns>
+        /// <remarks>
+        /// This operation is O(n) for time and O(1) for memory, where n is the search length. If <typeparamref
+        /// name="T"/> is a value type, especially a large one, <see cref="IndexOf(in T, int, int,
+        /// FastEqualityFunction{T})"/> may be one or more orders of magnitude faster.
+        /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public int IndexOf(in T item, int index, int count, IEqualityComparer<T>? equalityComparer)
         {
@@ -764,14 +797,47 @@ namespace Tsonto.Collections.Generic
             return -1;
         }
 
+        /// <summary>
+        /// Finds the position of the first occurence of the given element in the array segment.
+        /// </summary>
+        /// <param name="item">The element to search for.</param>
+        /// <param name="areEqual">A function to determine whether two elements should be considered a match.</param>
+        /// <returns>
+        /// The number of elements from the beginning of the segment that the element was found at, or -1 if the element
+        /// was not found.
+        /// </returns>
+        /// <remarks>This operation is O(n) for time and O(1) for memory, where n is the segment's length.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public int IndexOf(in T item, FastEqualityFunction<T> areEqual)
-            => IndexOf(in item, 0, ourLength, areEqual);
+                    => IndexOf(in item, 0, ourLength, areEqual);
 
+        /// <summary>
+        /// Finds the position of the first occurence of the given element in the array segment.
+        /// </summary>
+        /// <param name="item">The element to search for.</param>
+        /// <param name="index">The position to start the search from. 0 is the start of the array segment.</param>
+        /// <param name="areEqual">A function to determine whether two elements should be considered a match.</param>
+        /// <returns>
+        /// The number of elements from the beginning of the segment that the element was found at, or -1 if the element
+        /// was not found.
+        /// </returns>
+        /// <remarks>This operation is O(n) for time and O(1) for memory, where n is the search length.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public int IndexOf(in T item, int index, FastEqualityFunction<T> areEqual)
-            => IndexOf(in item, index, ourLength - index, areEqual);
+                    => IndexOf(in item, index, ourLength - index, areEqual);
 
+        /// <summary>
+        /// Finds the position of the first occurence of the given element in the array segment.
+        /// </summary>
+        /// <param name="item">The element to search for.</param>
+        /// <param name="index">The position to start the search from. 0 is the start of the array segment.</param>
+        /// <param name="count">How many elements to search.</param>
+        /// <param name="areEqual">A function to determine whether two elements should be considered a match.</param>
+        /// <returns>
+        /// The number of elements from the beginning of the segment that the element was found at, or -1 if the element
+        /// was not found.
+        /// </returns>
+        /// <remarks>This operation is O(n) for time and O(1) for memory, where n is the search length.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public int IndexOf(in T item, int index, int count, FastEqualityFunction<T> areEqual)
         {
@@ -793,6 +859,14 @@ namespace Tsonto.Collections.Generic
         int IImmutableList<T>.IndexOf(T item, int index, int count, IEqualityComparer<T>? equalityComparer)
             => IndexOf(item, index, count, equalityComparer);
 
+        /// <summary>
+        /// Produces a new <see cref="ImmutableArraySegment{T}"/> that is like the current one except with content
+        /// inserted somewhere within it.
+        /// </summary>
+        /// <param name="index">The location to insert the content at.</param>
+        /// <param name="element">The content to insert.</param>
+        /// <returns>The new <see cref="ImmutableArraySegment{T}"/>.</returns>
+        /// <remarks>This operation is O(n) for time and memory, where n is the combined length.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ImmutableArraySegment<T> Insert(Index index, in T element)
         {
@@ -819,6 +893,20 @@ namespace Tsonto.Collections.Generic
         IImmutableList<T> IImmutableList<T>.Insert(int index, T element)
             => Insert(index, element);
 
+        /// <summary>
+        /// Produces a new <see cref="ImmutableArraySegment{T}"/> that is like the current one except with content
+        /// inserted somewhere within it.
+        /// </summary>
+        /// <param name="index">The location to insert the content at.</param>
+        /// <param name="items">The content to insert.</param>
+        /// <returns>The new <see cref="ImmutableArraySegment{T}"/>.</returns>
+        /// <remarks>
+        /// This operation's time and memory characteristics are O(n), where n is the combined length of the output. The
+        /// copy operation is done efficiently if the actual type of the <paramref name="items"/> input is <c>T[]</c>,
+        /// <c>ImmutableArraySegment&lt;T&gt;</c>, or <c>ArraySegment&lt;T&gt;</c>, or implements
+        /// <c>IReadOnlyList&lt;T&gt;</c> or <c>ICollection&lt;T&gt;</c>. Otherwise, the copy is somewhat less
+        /// efficient, and iterates over the enumerable twice.
+        /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ImmutableArraySegment<T> Insert(Index index, T[] items)
         {
@@ -837,6 +925,20 @@ namespace Tsonto.Collections.Generic
             return new(dest, raw: true);
         }
 
+        /// <summary>
+        /// Produces a new <see cref="ImmutableArraySegment{T}"/> that is like the current one except with content
+        /// inserted somewhere within it.
+        /// </summary>
+        /// <param name="index">The location to insert the content at.</param>
+        /// <param name="items">The content to insert.</param>
+        /// <returns>The new <see cref="ImmutableArraySegment{T}"/>.</returns>
+        /// <remarks>
+        /// This operation's time and memory characteristics are O(n), where n is the combined length of the output. The
+        /// copy operation is done efficiently if the actual type of the <paramref name="items"/> input is <c>T[]</c>,
+        /// <c>ImmutableArraySegment&lt;T&gt;</c>, or <c>ArraySegment&lt;T&gt;</c>, or implements
+        /// <c>IReadOnlyList&lt;T&gt;</c> or <c>ICollection&lt;T&gt;</c>. Otherwise, the copy is somewhat less
+        /// efficient, and iterates over the enumerable twice.
+        /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ImmutableArraySegment<T> Insert(Index index, IEnumerable<T> items)
         {
@@ -855,6 +957,14 @@ namespace Tsonto.Collections.Generic
             return new(dest, raw: true);
         }
 
+        /// <summary>
+        /// Produces a new <see cref="ImmutableArraySegment{T}"/> that is like the current one except with content
+        /// inserted somewhere within it.
+        /// </summary>
+        /// <param name="index">The location to insert the content at.</param>
+        /// <param name="items">The content to insert.</param>
+        /// <returns>The new <see cref="ImmutableArraySegment{T}"/>.</returns>
+        /// <remarks>This operation is O(n) for time and memory, where n is the combined length.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ImmutableArraySegment<T> Insert(Index index, in ReadOnlySpan<T> items)
         {
@@ -873,6 +983,14 @@ namespace Tsonto.Collections.Generic
             return new(dest, raw: true);
         }
 
+        /// <summary>
+        /// Produces a new <see cref="ImmutableArraySegment{T}"/> that is like the current one except with content
+        /// inserted somewhere within it.
+        /// </summary>
+        /// <param name="index">The location to insert the content at.</param>
+        /// <param name="items">The content to insert.</param>
+        /// <returns>The new <see cref="ImmutableArraySegment{T}"/>.</returns>
+        /// <remarks>This operation is O(n) for time and memory, where n is the combined length.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ImmutableArraySegment<T> Insert(Index index, in Span<T> items)
         {
@@ -891,6 +1009,14 @@ namespace Tsonto.Collections.Generic
             return new(dest, raw: true);
         }
 
+        /// <summary>
+        /// Produces a new <see cref="ImmutableArraySegment{T}"/> that is like the current one except with content
+        /// inserted somewhere within it.
+        /// </summary>
+        /// <param name="index">The location to insert the content at.</param>
+        /// <param name="items">The content to insert.</param>
+        /// <returns>The new <see cref="ImmutableArraySegment{T}"/>.</returns>
+        /// <remarks>This operation is O(n) for time and memory, where n is the combined length.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ImmutableArraySegment<T> Insert(Index index, in ReadOnlyMemory<T> items)
         {
@@ -909,6 +1035,14 @@ namespace Tsonto.Collections.Generic
             return new(dest, raw: true);
         }
 
+        /// <summary>
+        /// Produces a new <see cref="ImmutableArraySegment{T}"/> that is like the current one except with content
+        /// inserted somewhere within it.
+        /// </summary>
+        /// <param name="index">The location to insert the content at.</param>
+        /// <param name="items">The content to insert.</param>
+        /// <returns>The new <see cref="ImmutableArraySegment{T}"/>.</returns>
+        /// <remarks>This operation is O(n) for time and memory, where n is the combined length.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ImmutableArraySegment<T> Insert(Index index, in Memory<T> items)
         {
@@ -932,9 +1066,55 @@ namespace Tsonto.Collections.Generic
         IImmutableList<T> IImmutableList<T>.InsertRange(int index, IEnumerable<T> items)
             => Insert(index, items);
 
+        /// <summary>
+        /// Gets the element at the given index by reference.
+        /// </summary>
+        /// <param name="index">
+        /// The position to read from, relative to the start of this object's view of the underlying array.
+        /// </param>
+        /// <returns>The element.</returns>
+        /// <remarks>This operation is O(1) for time and consumes no memory.</remarks>
+        /// <exception cref="IndexOutOfRangeException">
+        /// The specified position is beyond the array segment's bounds.
+        /// </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ref readonly T ItemRef(int index)
+            => ref data[ourStart + index];
+
+        /// <summary>
+        /// Gets the element at the given index by reference.
+        /// </summary>
+        /// <param name="index">
+        /// The position to read from, relative to the start or end of this object's view of the underlying array.
+        /// </param>
+        /// <returns>The element.</returns>
+        /// <remarks>This operation is O(1) for time and consumes no memory.</remarks>
+        /// <exception cref="IndexOutOfRangeException">
+        /// The specified position is beyond the array segment's bounds.
+        /// </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ref readonly T ItemRef(Index index)
+            => ref data[ourStart + index.GetOffset(ourLength)];
+
         int IImmutableList<T>.LastIndexOf(T item, int index, int count, IEqualityComparer<T>? equalityComparer)
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ImmutableArraySegment{T}"/> that's the same as this one except with a specified
+        /// element prepended.
+        /// </summary>
+        /// <param name="value">The new element.</param>
+        /// <returns>A new <see cref="ImmutableArraySegment{T}"/>.</returns>
+        /// <remarks>This operation is O(n) for time and memory, where n is this segment's length.</remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ImmutableArraySegment<T> Prepend(T value)
+        {
+            var newArray = new T[ourLength + 1];
+            Array.Copy(data, ourStart, newArray, 1, ourLength);
+            data[0] = value;
+            return new(newArray, raw: true);
         }
 
         /// <inheritdoc/>
@@ -943,6 +1123,20 @@ namespace Tsonto.Collections.Generic
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Produces a new <see cref="ImmutableArraySegment{T}"/> that's like the current one except with certain
+        /// elements removed.
+        /// </summary>
+        /// <param name="match">
+        /// A condition to apply to the source elements. If the condition evaluates to true, the element will be omitted
+        /// from the output.
+        /// </param>
+        /// <returns>The new <see cref="ImmutableArraySegment{T}"/>.</returns>
+        /// <remarks>
+        /// This operation is O(n) for time and memory, where n is this segment's length. Time complexity is modified by
+        /// the performance of the predicate. If <typeparamref name="T"/> is a value type, this method will involve
+        /// numerous copy operations, which may be detrimental to performance.
+        /// </remarks>
         public ImmutableArraySegment<T> RemoveAll(Predicate<T> match)
         {
             var output = new List<T>();
@@ -990,15 +1184,38 @@ namespace Tsonto.Collections.Generic
             throw new NotImplementedException();
         }
 
-        /// <inheritdoc/>
-        IImmutableList<T> IImmutableList<T>.SetItem(int index, T value)
-        {
-            throw new NotImplementedException();
-        }
-
+        /// <summary>
+        /// Determines whether the segment's elements match the elements of a given sequence, using the default equality
+        /// comparer.
+        /// </summary>
+        /// <param name="other">The sequence to compare with.</param>
+        /// <returns>True if the sequences are equal; false otherwise.</returns>
+        /// <remarks>
+        /// This method has O(n) time complexity and O(1) memory complexity, where n is the length of the shorter
+        /// sequence. If the input implements either <c>IReadOnlyCollection&lt;T&gt;</c> or <c>ICollection</c>, the
+        /// method can use an O(1) shortcut if the sequence lengths differ. The enumeration is only iterated over once.
+        /// If <typeparamref name="T"/> is a value type, this method will involve many copy operations, which may be
+        /// detrimental to performance.
+        /// </remarks>
         public bool SequenceEquals(IEnumerable<T> other)
-            => SequenceEquals(other, EqualityComparer<T>.Default);
+             => SequenceEquals(other, EqualityComparer<T>.Default);
 
+        /// <summary>
+        /// Determines whether the segment's elements match the elements of a given sequence, using the given equality
+        /// comparer.
+        /// </summary>
+        /// <param name="other">The sequence to compare with.</param>
+        /// <param name="equalityComparer">
+        /// The equality comparer to use for determining whether two elements are equal.
+        /// </param>
+        /// <returns>True if the sequences are equal; false otherwise.</returns>
+        /// <remarks>
+        /// This method has O(n) time complexity and O(1) memory complexity, where n is the length of the shorter
+        /// sequence. If the input implements either <c>IReadOnlyCollection&lt;T&gt;</c> or <c>ICollection</c>, the
+        /// method can use an O(1) shortcut if the sequence lengths differ. The enumeration is only iterated over once.
+        /// If <typeparamref name="T"/> is a value type, this method will involve many copy operations, which may be
+        /// detrimental to performance.
+        /// </remarks>
         public bool SequenceEquals(IEnumerable<T> other, IEqualityComparer<T> equalityComparer)
         {
             if (other is IReadOnlyCollection<T> roc)
@@ -1025,9 +1242,34 @@ namespace Tsonto.Collections.Generic
             return i == ourLength;
         }
 
+        /// <summary>
+        /// Determines whether the segment's elements match the elements of a given sequence, using the default equality
+        /// comparer.
+        /// </summary>
+        /// <param name="other">The sequence to compare with.</param>
+        /// <returns>True if the sequences are equal; false otherwise.</returns>
+        /// <remarks>
+        /// This method has O(n) time complexity and O(1) memory complexity, where n is the length of the shorter
+        /// sequence. The method uses an O(1) shortcut if the sequence lengths differ. If <typeparamref name="T"/> is a
+        /// value type, this method will involve many copy operations, which may be detrimental to performance.
+        /// </remarks>
         public bool SequenceEquals(ImmutableArraySegment<T> other)
             => SequenceEquals(other, EqualityComparer<T>.Default);
 
+        /// <summary>
+        /// Determines whether the segment's elements match the elements of a given sequence, using the given equality
+        /// comparer.
+        /// </summary>
+        /// <param name="other">The sequence to compare with.</param>
+        /// <param name="equalityComparer">
+        /// The equality comparer to use for determining whether two elements are equal.
+        /// </param>
+        /// <returns>True if the sequences are equal; false otherwise.</returns>
+        /// <remarks>
+        /// This method has O(n) time complexity and O(1) memory complexity, where n is the length of the shorter
+        /// sequence. The method uses an O(1) shortcut if the sequence lengths differ. If <typeparamref name="T"/> is a
+        /// value type, this method will involve many copy operations, which may be detrimental to performance.
+        /// </remarks>
         public bool SequenceEquals(ImmutableArraySegment<T> other, IEqualityComparer<T> equalityComparer)
         {
             if (ourLength != other.ourLength)
@@ -1038,6 +1280,20 @@ namespace Tsonto.Collections.Generic
             return true;
         }
 
+        /// <summary>
+        /// Determines whether the segment's elements match the elements of a given sequence, using the given equality
+        /// comparer.
+        /// </summary>
+        /// <param name="other">The sequence to compare with.</param>
+        /// <param name="equalityComparer">
+        /// The equality comparer to use for determining whether two elements are equal.
+        /// </param>
+        /// <returns>True if the sequences are equal; false otherwise.</returns>
+        /// <remarks>
+        /// This method has O(n) time complexity and O(1) memory complexity, where n is the length of the shorter
+        /// sequence. The method uses an O(1) shortcut if the sequence lengths differ. If <typeparamref name="T"/> is a
+        /// value type, this method will involve many copy operations, which may be detrimental to performance.
+        /// </remarks>
         public bool SequenceEquals(IReadOnlyList<T> other, IEqualityComparer<T>? equalityComparer)
         {
             equalityComparer ??= EqualityComparer<T>.Default;
@@ -1050,6 +1306,54 @@ namespace Tsonto.Collections.Generic
             return true;
         }
 
+        /// <inheritdoc/>
+        IImmutableList<T> IImmutableList<T>.SetItem(int index, T value)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Gets a new <see cref="ImmutableArraySegment{T}"/> representing a portion of this instance's view into the
+        /// backing array.
+        /// </summary>
+        /// <param name="offset">The starting point of the range.</param>
+        /// <param name="length">The length of the range.</param>
+        /// <returns>A new <see cref="ImmutableArraySegment{T}"/>.</returns>
+        /// <remarks>This operation is O(1) for time and memory.</remarks>
+        /// <exception cref="IndexOutOfRangeException">
+        /// The start or end of the range is beyond the array segment's bounds.
+        /// </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ImmutableArraySegment<T> Slice(int offset, int length)
+        {
+            if (offset < 0 || offset > length || length < 0 || offset + length > ourLength)
+                throw new IndexOutOfRangeException();
+            return new(data, ourStart + offset, length, true);
+        }
+
+        /// <summary>
+        /// Gets a new <see cref="ImmutableArraySegment{T}"/> representing a portion of this instance's view into the
+        /// backing array.
+        /// </summary>
+        /// <param name="offset">The starting point of the range.</param>
+        /// <returns>A new <see cref="ImmutableArraySegment{T}"/>.</returns>
+        /// <remarks>This operation is O(1) for time and memory.</remarks>
+        /// <exception cref="IndexOutOfRangeException">
+        /// The start of the range is beyond the array segment's bounds.
+        /// </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ImmutableArraySegment<T> Slice(int offset)
+        {
+            if (offset < 0 || offset > ourLength)
+                throw new IndexOutOfRangeException();
+            return new(data, ourStart + offset, ourLength - offset, true);
+        }
+
+        /// <summary>
+        /// Copies the elements to an array.
+        /// </summary>
+        /// <returns>The array.</returns>
+        /// <remarks>This operation is O(1) for time and memory.</remarks>
         public T[] ToArray()
         {
             var output = new T[ourLength];
@@ -1057,8 +1361,116 @@ namespace Tsonto.Collections.Generic
             return output;
         }
 
+        /// <inheritdoc/>
         public override string ToString()
             => $"{{ImmutableArraySegment<{typeof(T).Name}>, length {ourLength}}}";
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        internal static T[] AllocateAndCopyArray(int destOffset, int extraDestLength, T[] source)
+        {
+            var dest = new T[source.Length + extraDestLength];
+            Array.Copy(source, 0, dest, destOffset, source.Length);
+            return dest;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        internal static T[] AllocateAndCopyArraySegment(int destOffset, int extraDestLength, ArraySegment<T> source)
+        {
+            var dest = new T[source.Count + extraDestLength];
+            source.CopyTo(dest, destOffset);
+            return dest;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        internal static T[] AllocateAndCopyCollection(int destOffset, int extraDestLength, ICollection<T> source)
+        {
+            var dest = new T[source.Count + extraDestLength];
+            source.CopyTo(dest, destOffset);
+            return dest;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        internal static T[] AllocateAndCopyImmutableArraySegment(int destOffset, int extraDestLength, ImmutableArraySegment<T> source)
+        {
+            var dest = new T[source.Length + extraDestLength];
+            source.CopyTo(dest, destOffset);
+            return dest;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        internal static T[] AllocateAndCopyMemoryStruct(int destOffset, int extraDestLength, in Memory<T> source)
+        {
+            var dest = new T[source.Length + extraDestLength];
+            source.CopyTo(new Memory<T>(dest)[destOffset..]);
+            return dest;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        internal static T[] AllocateAndCopyOtherEnumerable(int destOffset, int extraDestLength, IEnumerable<T> source)
+        {
+            int sourceLength = source.Count();
+            var dest = new T[sourceLength + extraDestLength];
+            var enumerator = source.GetEnumerator();
+            for (int i = 0; i < sourceLength; ++i)
+            {
+                if (!enumerator.MoveNext())
+                    throw new InvalidOperationException("The input sequence is shorter the second time than the first time.");
+                dest[i + destOffset] = enumerator.Current;
+            }
+            if (enumerator.MoveNext())
+                throw new InvalidOperationException("The input sequence is longer the second time than the first time.");
+            return dest;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        internal static T[] AllocateAndCopyReadOnlyList(int destOffset, int extraDestLength, IReadOnlyList<T> source)
+        {
+            var dest = new T[source.Count + extraDestLength];
+            for (int i = 0; i < source.Count; ++i)
+                dest[i + destOffset] = source[i];
+            return dest;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        internal static T[] AllocateAndCopyReadOnlyMemoryStruct(int destOffset, int extraDestLength, in ReadOnlyMemory<T> source)
+        {
+            var dest = new T[source.Length + extraDestLength];
+            source.CopyTo(new Memory<T>(dest)[destOffset..]);
+            return dest;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        internal static T[] AllocateAndCopyReadOnlySpan(int destOffset, int extraDestLength, in ReadOnlySpan<T> source)
+        {
+            var dest = new T[source.Length + extraDestLength];
+            source.CopyTo(new Span<T>(dest)[destOffset..]);
+            return dest;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        internal static T[] AllocateAndCopySpan(int destOffset, int extraDestLength, in Span<T> source)
+        {
+            var dest = new T[source.Length + extraDestLength];
+            source.CopyTo(new Span<T>(dest)[destOffset..]);
+            return dest;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static T[] AllocateAndCopy(IEnumerable<T> source, int destOffset, int extraDestLength)
+        {
+            if (source is T[] sourceArray)
+                return AllocateAndCopyArray(destOffset, extraDestLength, sourceArray);
+            else if (source is ImmutableArraySegment<T> sourceIM)
+                return AllocateAndCopyImmutableArraySegment(destOffset, extraDestLength, sourceIM);
+            else if (source is ArraySegment<T> sourceArraySegment)
+                return AllocateAndCopyArraySegment(destOffset, extraDestLength, sourceArraySegment);
+            else if (source is IReadOnlyList<T> sourceROList)
+                return AllocateAndCopyReadOnlyList(destOffset, extraDestLength, sourceROList);
+            else if (source is ICollection<T> sourceCollection)
+                return AllocateAndCopyCollection(destOffset, extraDestLength, sourceCollection);
+            else
+                return AllocateAndCopyOtherEnumerable(destOffset, extraDestLength, source);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void ValidateNotNull(object? source)
@@ -1081,6 +1493,44 @@ namespace Tsonto.Collections.Generic
                 else
                     throw new ArgumentException("The requested range would go past end of the source.");
             }
+        }
+
+        private class Enumerator : IEnumerator<T>
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public Enumerator(ImmutableArraySegment<T> parent)
+            {
+                position = parent.ourStart - 1;
+                this.parent = parent;
+            }
+
+            public T Current
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+                get => position >= parent.ourStart && position < parent.ourEnd
+                    ? parent.data[position]
+                    : throw new InvalidOperationException();
+            }
+
+            object IEnumerator.Current => Current!;
+            private readonly ImmutableArraySegment<T> parent;
+            private int position;
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public void Dispose()
+            {
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public bool MoveNext()
+            {
+                ++position;
+                return position < parent.ourEnd;
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public void Reset()
+                => position = parent.ourStart - 1;
         }
     }
 }

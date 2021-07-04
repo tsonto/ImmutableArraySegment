@@ -15,14 +15,7 @@
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <UseFullSemVerForNuGet>true</UseFullSemVerForNuGet>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-        <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+        <DocumentationFile>ImmutableArraySegment.xml</DocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
