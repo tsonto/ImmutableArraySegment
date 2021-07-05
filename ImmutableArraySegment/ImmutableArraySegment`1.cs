@@ -809,7 +809,7 @@ namespace Tsonto.Collections.Generic
         /// <remarks>This operation is O(n) for time and O(1) for memory, where n is the segment's length.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public int IndexOf(in T item, FastEqualityFunction<T> areEqual)
-                    => IndexOf(in item, 0, ourLength, areEqual);
+            => IndexOf(in item, 0, ourLength, areEqual);
 
         /// <summary>
         /// Finds the position of the first occurence of the given element in the array segment.
@@ -824,7 +824,7 @@ namespace Tsonto.Collections.Generic
         /// <remarks>This operation is O(n) for time and O(1) for memory, where n is the search length.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public int IndexOf(in T item, int index, FastEqualityFunction<T> areEqual)
-                    => IndexOf(in item, index, ourLength - index, areEqual);
+             => IndexOf(in item, index, ourLength - index, areEqual);
 
         /// <summary>
         /// Finds the position of the first occurence of the given element in the array segment.
@@ -854,10 +854,115 @@ namespace Tsonto.Collections.Generic
             return -1;
         }
 
+        /// <summary>
+        /// Finds the position of the first occurence of the given sequence in the array segment.
+        /// </summary>
+        /// <param name="sequence">The sequence to search for.</param>
+        /// <param name="index">The position to start the search from. 0 is the start of the array segment.</param>
+        /// <param name="count">How many elements to search.</param>
+        /// <param name="areEqual">A function to determine whether two elements should be considered a match.</param>
+        /// <returns>
+        /// The number of elements from the beginning of the segment that the start of the sequence was found at, or -1
+        /// if the sequence was not found.
+        /// </returns>
+        /// <remarks>
+        /// This operation is O(n*s) for time and O(1) for memory, where n is the search length and s is the length of
+        /// the sequence.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        public int IndexOf(ImmutableArraySegment<T> sequence, int index, int count, FastEqualityFunction<T> areEqual)
+        {
+            if (index < 0 || index > ourLength)
+                throw new ArgumentOutOfRangeException(nameof(index));
+            if (count < 0 || index + count > ourLength)
+                throw new ArgumentOutOfRangeException(nameof(count));
+            if (areEqual is null)
+                throw new ArgumentNullException(nameof(areEqual));
+
+            for (int i = 0; i <= count - sequence.Length; ++i)
+            {
+                if (IsMatchAtFast(in sequence, index + i, areEqual))
+                    return i;
+            }
+
+            return -1;
+        }
+
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         int IImmutableList<T>.IndexOf(T item, int index, int count, IEqualityComparer<T>? equalityComparer)
             => IndexOf(item, index, count, equalityComparer);
+
+        /// <summary>
+        /// Finds the position of the first occurence of any of the given elements in the array segment.
+        /// </summary>
+        /// <param name="items">The elements to search for.</param>
+        /// <param name="index">The position to start the search from. 0 is the start of the array segment.</param>
+        /// <param name="count">How many elements to search.</param>
+        /// <param name="areEqual">A function to determine whether two elements should be considered a match.</param>
+        /// <returns>
+        /// The number of elements from the beginning of the segment that the element was found at, or -1 if none of the
+        /// elements were not found.
+        /// </returns>
+        /// <remarks>
+        /// This operation is O(n*i) for time and O(1) for memory, where n is the search length and i is the number of
+        /// elements sought.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        public int IndexOfAny(T[] items, int index, int count, FastEqualityFunction<T> areEqual)
+        {
+            if (index < 0 || index > ourLength)
+                throw new ArgumentOutOfRangeException(nameof(index));
+            if (count < 0 || index + count > ourLength)
+                throw new ArgumentOutOfRangeException(nameof(count));
+            if (areEqual is null)
+                throw new ArgumentNullException(nameof(areEqual));
+
+            for (int i = index; i < index + count; ++i)
+                for (int j = 0; j < items.Length; ++j)
+                    if (areEqual(in items[j], in data[i + ourStart]))
+                        return i;
+            return -1;
+        }
+
+        /// <summary>
+        /// Finds the position of the first occurence of any of the given sequences in the array segment.
+        /// </summary>
+        /// <param name="sequences">The sequences to search for.</param>
+        /// <param name="index">The position to start the search from. 0 is the start of the array segment.</param>
+        /// <param name="count">How many elements to search.</param>
+        /// <param name="areEqual">A function to determine whether two elements should be considered a match.</param>
+        /// <returns>
+        /// The number of elements from the beginning of the segment that the start of the sequence was found at, or -1
+        /// if none of the sequences were not found.
+        /// </returns>
+        /// <remarks>
+        /// This operation is O(n*s) for time and O(1) for memory, where n is the search length and s is the total
+        /// length of the sequences.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        public int IndexOfAny(IEnumerable<ImmutableArraySegment<T>> sequences, int index, int count, FastEqualityFunction<T> areEqual)
+        {
+            if (index < 0 || index > ourLength)
+                throw new ArgumentOutOfRangeException(nameof(index));
+            if (count < 0 || index + count > ourLength)
+                throw new ArgumentOutOfRangeException(nameof(count));
+            if (areEqual is null)
+                throw new ArgumentNullException(nameof(areEqual));
+
+            var minSequenceLength = sequences.Min(s => s.Length);
+
+            for (int i = 0; i <= count - minSequenceLength; ++i)
+            {
+                foreach (var sequence in sequences)
+                {
+                    if (IsMatchAtFast(in sequence, index + i, areEqual))
+                        return i;
+                }
+            }
+
+            return -1;
+        }
 
         /// <summary>
         /// Produces a new <see cref="ImmutableArraySegment{T}"/> that is like the current one except with content
@@ -1065,6 +1170,25 @@ namespace Tsonto.Collections.Generic
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         IImmutableList<T> IImmutableList<T>.InsertRange(int index, IEnumerable<T> items)
             => Insert(index, items);
+
+        /// <summary>
+        /// Checks whether the elements beginning at the specified match the elements of given sequence, for the full length of the sequence.
+        /// </summary>
+        /// <param name="sequence">The sequence to match against the array segment's data.</param>
+        /// <param name="index">The position in the array segment to start the comparison from.</param>
+        /// <param name="areEqual">A function to determine whether two elements should be considered a match.</param>
+        /// <returns></returns>
+        /// <remarks>If the sequence is longer than the remaining number of elements in the array segment, the method returns false.</remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsMatch(in ImmutableArraySegment<T> sequence, int index, FastEqualityFunction<T> areEqual)
+        {
+            if (index < 0 || index > ourLength)
+                throw new ArgumentOutOfRangeException(nameof(index));
+            if (areEqual is null)
+                throw new ArgumentNullException(nameof(areEqual));
+
+            return IsMatchAtFast(in sequence, index, areEqual);
+        }
 
         /// <summary>
         /// Gets the element at the given index by reference.
@@ -1493,6 +1617,23 @@ namespace Tsonto.Collections.Generic
                 else
                     throw new ArgumentException("The requested range would go past end of the source.");
             }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        private bool IsMatchAtFast(in ImmutableArraySegment<T> sequence, int index, FastEqualityFunction<T> areEqual)
+        {
+            if (sequence.Length > ourLength - index)
+                return false;
+
+            for (int i = 0; i < sequence.Length; ++i)
+            {
+                ref readonly T elementFromSequence = ref sequence.ItemRef(i);
+                ref readonly T elementFromData = ref data[ourStart + index + i];
+                if (!areEqual(in elementFromSequence, in elementFromData))
+                    return false;
+            }
+
+            return true;
         }
 
         private class Enumerator : IEnumerator<T>

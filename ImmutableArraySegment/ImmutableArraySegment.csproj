@@ -19,6 +19,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="ImmutableArraySegment.xml" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="GitVersion.MsBuild" Version="5.6.9" Condition=" '$(CI_IS_PUSH_TO_MAIN)' == 'true' AND '$(IS_ACT)' != '1' ">
             <!-- Skip in act because it has a path-delimiter bug that makes it fail when running a Linux runner from Windows. -->
             <PrivateAssets>all</PrivateAssets>
