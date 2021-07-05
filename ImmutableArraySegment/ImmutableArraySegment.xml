@@ -593,8 +593,59 @@
             </returns>
             <remarks>This operation is O(n) for time and O(1) for memory, where n is the search length.</remarks>
         </member>
+        <member name="M:Tsonto.Collections.Generic.ImmutableArraySegment`1.IndexOf(Tsonto.Collections.Generic.ImmutableArraySegment{`0},System.Int32,System.Int32,Tsonto.Collections.Generic.FastEqualityFunction{`0})">
+            <summary>
+            Finds the position of the first occurence of the given sequence in the array segment.
+            </summary>
+            <param name="sequence">The sequence to search for.</param>
+            <param name="index">The position to start the search from. 0 is the start of the array segment.</param>
+            <param name="count">How many elements to search.</param>
+            <param name="areEqual">A function to determine whether two elements should be considered a match.</param>
+            <returns>
+            The number of elements from the beginning of the segment that the start of the sequence was found at, or -1
+            if the sequence was not found.
+            </returns>
+            <remarks>
+            This operation is O(n*s) for time and O(1) for memory, where n is the search length and s is the length of
+            the sequence.
+            </remarks>
+        </member>
         <member name="M:Tsonto.Collections.Generic.ImmutableArraySegment`1.System#Collections#Immutable#IImmutableList{T}#IndexOf(`0,System.Int32,System.Int32,System.Collections.Generic.IEqualityComparer{`0})">
             <inheritdoc/>
+        </member>
+        <member name="M:Tsonto.Collections.Generic.ImmutableArraySegment`1.IndexOfAny(`0[],System.Int32,System.Int32,Tsonto.Collections.Generic.FastEqualityFunction{`0})">
+            <summary>
+            Finds the position of the first occurence of any of the given elements in the array segment.
+            </summary>
+            <param name="items">The elements to search for.</param>
+            <param name="index">The position to start the search from. 0 is the start of the array segment.</param>
+            <param name="count">How many elements to search.</param>
+            <param name="areEqual">A function to determine whether two elements should be considered a match.</param>
+            <returns>
+            The number of elements from the beginning of the segment that the element was found at, or -1 if none of the
+            elements were not found.
+            </returns>
+            <remarks>
+            This operation is O(n*i) for time and O(1) for memory, where n is the search length and i is the number of
+            elements sought.
+            </remarks>
+        </member>
+        <member name="M:Tsonto.Collections.Generic.ImmutableArraySegment`1.IndexOfAny(System.Collections.Generic.IEnumerable{Tsonto.Collections.Generic.ImmutableArraySegment{`0}},System.Int32,System.Int32,Tsonto.Collections.Generic.FastEqualityFunction{`0})">
+            <summary>
+            Finds the position of the first occurence of any of the given sequences in the array segment.
+            </summary>
+            <param name="sequences">The sequences to search for.</param>
+            <param name="index">The position to start the search from. 0 is the start of the array segment.</param>
+            <param name="count">How many elements to search.</param>
+            <param name="areEqual">A function to determine whether two elements should be considered a match.</param>
+            <returns>
+            The number of elements from the beginning of the segment that the start of the sequence was found at, or -1
+            if none of the sequences were not found.
+            </returns>
+            <remarks>
+            This operation is O(n*s) for time and O(1) for memory, where n is the search length and s is the total
+            length of the sequences.
+            </remarks>
         </member>
         <member name="M:Tsonto.Collections.Generic.ImmutableArraySegment`1.Insert(System.Index,`0@)">
             <summary>
@@ -683,6 +734,16 @@
         </member>
         <member name="M:Tsonto.Collections.Generic.ImmutableArraySegment`1.System#Collections#Immutable#IImmutableList{T}#InsertRange(System.Int32,System.Collections.Generic.IEnumerable{`0})">
             <inheritdoc/>
+        </member>
+        <member name="M:Tsonto.Collections.Generic.ImmutableArraySegment`1.IsMatch(Tsonto.Collections.Generic.ImmutableArraySegment{`0}@,System.Int32,Tsonto.Collections.Generic.FastEqualityFunction{`0})">
+            <summary>
+            Checks whether the elements beginning at the specified match the elements of given sequence, for the full length of the sequence.
+            </summary>
+            <param name="sequence">The sequence to match against the array segment's data.</param>
+            <param name="index">The position in the array segment to start the comparison from.</param>
+            <param name="areEqual">A function to determine whether two elements should be considered a match.</param>
+            <returns></returns>
+            <remarks>If the sequence is longer than the remaining number of elements in the array segment, the method returns false.</remarks>
         </member>
         <member name="M:Tsonto.Collections.Generic.ImmutableArraySegment`1.ItemRef(System.Int32)">
             <summary>

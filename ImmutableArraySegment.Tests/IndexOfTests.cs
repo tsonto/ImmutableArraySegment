@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using FluentAssertions;
 using Tsonto.Collections.Generic;
 using Xunit;
@@ -109,6 +110,51 @@ namespace Tests
                 Assert.Throws<ArgumentOutOfRangeException>(act);
             else
                 act();
+        }
+
+        [Theory]
+        [InlineData("ab", 0)] // match at start
+        [InlineData("de", 3)] // match normal
+        [InlineData("gh", 6)] // match at end
+        [InlineData("xy", -1)] // no match
+        [InlineData("deg", -1)] // partial match
+        [InlineData("\0", -1)] // match out of bounds
+        public void IndexOf_Sequence(string sought, int expected)
+        {
+            var sequence = new ImmutableArraySegment<char>(sought);
+            var inner = "\0\0abcdefgh\0".ToCharArray();
+            var uut = new ImmutableArraySegment<char>(inner, 2, 8, raw: true);
+            static bool eq(in char m, in char n) => m == n;
+            uut.IndexOf(sequence, 0, uut.Length, eq).Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData("ac", 0)] // match at start
+        [InlineData("ca", 0)] // match at start but not first sought
+        [InlineData("xhy", 7)] // match at end
+        [InlineData("xy", -1)] // no match
+        [InlineData("\0", -1)] // match out of bounds
+        public void IndexOfAny_Items(string sought, int expected)
+        {
+            var inner = "\0\0abcdefgh\0".ToCharArray();
+            var uut = new ImmutableArraySegment<char>(inner, 2, 8, raw: true);
+            static bool eq(in char m, in char n) => m == n;
+            uut.IndexOfAny(sought.ToCharArray(), 0, uut.Length, eq).Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData("ab|cd", 0)] // match at start
+        [InlineData("cd|ab", 0)] // match at start but not first sought
+        [InlineData("x|gh|y", 6)] // match at end
+        [InlineData("xy|qr", -1)] // no match
+        [InlineData("\0", -1)] // match out of bounds
+        public void IndexOfAny_Sequences(string sought, int expected)
+        {
+            var sequences = sought.Split('|').Select(s => new ImmutableArraySegment<char>(s.ToCharArray())).ToArray();
+            var inner = "\0\0abcdefgh\0".ToCharArray();
+            var uut = new ImmutableArraySegment<char>(inner, 2, 8, raw: true);
+            static bool eq(in char m, in char n) => m == n;
+            uut.IndexOfAny(sequences, 0, uut.Length, eq).Should().Be(expected);
         }
 
         private class StrangeComparer : IEqualityComparer<StrictEquatable>
